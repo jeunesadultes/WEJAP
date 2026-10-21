@@ -747,6 +747,11 @@ a { color: inherit; }
     </article>
   </section>
 
+  <section class="t-sec wrap" id="plan">
+    <h2 class="t-h2"><small>pour ne pas se perdre</small><span>Le plan</span></h2>
+    <div id="t-plan"></div>
+  </section>
+
   <section class="t-sec wrap t-infos" id="infos">
     <h2 class="t-h2"><small>avant de partir</small><span>Infos pratiques</span></h2>
     <div class="info-intro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7.5v.01"/></svg><p>Des membres du staff JAP seront présents sur place pour t&#x27;accueillir et te guider à ton arrivée.</p></div>
@@ -796,6 +801,502 @@ Prévois tes propres petits-déjeuners et en-cas pour la journée : il n&#x27;y 
     b.addEventListener("change", function () { done[b.dataset.sac] = b.checked; try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (_) {} count(); });
   });
   count();
+})();
+</script>
+<script>
+(function () {
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const AV = 'font-family="Archivo Black, Arial Black, sans-serif"', IS = 'font-family="Instrument Sans, Arial, sans-serif"';
+  const PLAN_SVG = '<svg viewBox="0 0 360 600" role="img" aria-label="Plan du site" style="display:block;width:100%;height:auto">' +
+    '<rect width="360" height="600" rx="12" fill="#FFF8F1"/>' +
+    // Couloirs
+    '<g fill="#DDEFFA"><polygon points="172,130 228,130 215,250 190,470 100,470 140,250"/><rect x="15" y="194" width="146" height="28"/></g>' +
+    '<g ' + IS + ' font-size="9.5" font-weight="600" fill="#1B0300" opacity=".45" letter-spacing="1.5"><text x="40" y="212">COULOIR</text><text transform="translate(160 452) rotate(-81)">COULOIR</text></g>' +
+    // Salle de culte
+    '<rect x="150" y="12" width="176" height="116" rx="10" fill="#1B0300"/>' +
+    '<text ' + AV + ' font-size="19" letter-spacing="-.8" fill="#FF744F"><tspan x="166" y="50">SALLE</tspan><tspan x="166" y="72">DE CULTE</tspan></text>' +
+    '<text x="166" y="100" ' + IS + ' font-size="11.5" fill="#FFF8F1" opacity=".75">Soirées · Plénières</text>' +
+    // Salles atelier
+    '<g fill="#CAE7F7"><rect x="236" y="136" width="109" height="52" rx="8"/><rect x="236" y="194" width="109" height="44" rx="8"/><rect x="15" y="136" width="66" height="52" rx="8"/><rect x="87" y="136" width="66" height="52" rx="8"/></g>' +
+    '<g ' + IS + ' font-size="12" font-weight="700" fill="#1B0300"><text x="246" y="166">Salle atelier</text><text x="246" y="220">Salle atelier</text>' +
+      '<text><tspan x="25" y="158">Salle</tspan><tspan x="25" y="173">atelier</tspan></text><text><tspan x="97" y="158">Salle</tspan><tspan x="97" y="173">atelier</tspan></text></g>' +
+    // Bureaux
+    '<g fill="#FFFFFF" stroke="#1B0300" stroke-width="1.5"><rect x="15" y="228" width="76" height="40" rx="8"/><rect x="232" y="252" width="113" height="52" rx="8"/><rect x="232" y="310" width="113" height="60" rx="8"/><rect x="40" y="276" width="62" height="34" rx="6"/><rect x="40" y="370" width="62" height="28" rx="6"/></g>' +
+    '<g ' + IS + ' font-size="12" font-weight="700" fill="#1B0300"><text x="25" y="252">QG staff</text><text x="268" y="283">Infirmerie</text><text x="246" y="345">Direction</text><text x="60" y="298">WC</text><text x="60" y="389">WC</text></g>' +
+    '<path d="M254 270h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#FF744F"/>' +
+    // Escalier chambres
+    '<rect x="40" y="316" width="62" height="48" rx="6" fill="#FFE3DA" stroke="#FF744F" stroke-width="1.5"/>' +
+    '<g stroke="#FF744F" stroke-width="1.5"><path d="M48 326h46M48 334h46M48 342h46M48 350h46M48 358h46"/></g>' +
+    '<g ' + IS + ' font-size="10" font-weight="700" fill="#822E13"><text x="108" y="336">↑ Chambres</text><text x="108" y="348" font-weight="500">1er étage</text></g>' +
+    // Stands, buvette
+    '<rect x="40" y="404" width="60" height="58" rx="8" fill="#FF744F"/>' +
+    '<text ' + AV + ' font-size="12" letter-spacing="-.4" fill="#1B0300" transform="translate(76 452) rotate(-90)">STANDS</text>' +
+    '<rect x="100" y="470" width="90" height="34" rx="8" fill="#FFD3C5" stroke="#FF744F" stroke-width="1.5"/>' +
+    '<text x="120" y="492" ' + IS + ' font-size="12" font-weight="700" fill="#1B0300">Buvette</text>' +
+    '<path d="M96 487H32m8-6-8 6 8 6" fill="none" stroke="#822E13" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<text x="34" y="478" ' + IS + ' font-size="10.5" font-weight="700" fill="#822E13">Jardin</text>' +
+    // Accueil, entrée
+    '<rect x="206" y="386" width="84" height="46" rx="8" fill="#FFFFFF" stroke="#1B0300" stroke-width="2.5"/>' +
+    '<text x="218" y="414" ' + AV + ' font-size="13" letter-spacing="-.4" fill="#1B0300">ACCUEIL</text>' +
+    '<path d="M346 409h-50m8-6-8 6 8 6" fill="none" stroke="#FF744F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<text x="300" y="398" ' + IS + ' font-size="11" font-weight="700" fill="#822E13">Entrée</text>' +
+    // Restaurant
+    '<rect x="70" y="512" width="190" height="76" rx="10" fill="#822E13"/>' +
+    '<text x="90" y="550" ' + AV + ' font-size="18" letter-spacing="-.8" fill="#FFF8F1">RESTAURANT</text>' +
+    '<text x="90" y="570" ' + IS + ' font-size="11.5" fill="#FFF8F1" opacity=".8">Tous les repas</text>' +
+    "</svg>";
+
+  /* ---------- Plan 3D (three.js chargé à la demande) ---------- */
+  // [couleur, contour, titre, description, ids, extérieur]
+  const REPERES = [
+    ["#FFFFFF", true, "Entrée & Accueil", "Côté parking. Arrivées, infos, objets trouvés.", ["accueil"]],
+    ["#1B0300", false, "Salle de culte", "Soirées et plénières, tout en haut du couloir.", ["culte"]],
+    ["#CAE7F7", false, "Salles atelier", "Deux à droite en haut du couloir, deux dans l'aile gauche.", ["at1", "at2", "at3", "at4"]],
+    ["#FF744F", false, "Stands & Buvette", "Le long du couloir, près de l'accès jardin.", ["stands", "buvette"]],
+    ["#822E13", false, "Restaurant", "Tous les repas, au bout du couloir.", ["resto"]],
+    ["#FFE3DA", true, "Chambres", "1er étage, par l'escalier entre les WC.", ["escalier"]],
+    ["#FFFFFF", true, "Infirmerie", "À côté de la direction.", ["infirmerie"]],
+    ["#FFFFFF", true, "QG staff & Direction", "L'équipe d'organisation.", ["qg", "direction"]],
+    ["#1B1B1B", false, "Portail & parking", "On entre par le portail, puis le parking en boucle mène à l'entrée.", ["parking"], 1],
+    ["#9FC27F", false, "Le jardin", "La grande pelouse et son allée, par l'accès jardin.", ["jardin"], 1],
+    ["#C8643B", false, "Terrains de sport", "Deux terrains près du bâtiment, deux courts au fond du parc.", ["sport"], 1],
+    ["#9ED4EE", false, "Parc animalier", "La mini-ferme, le long de l'allée.", ["ferme"], 1],
+    ["#E9D5B5", false, "Minigolf", "Juste après la ferme.", ["minigolf"], 1],
+  ];
+  // x, y, largeur, profondeur (unités du plan 2D), hauteur, couleur, nom
+  // x, y, largeur, profondeur (unités du plan), hauteur, couleur, nom — calés sur la vue aérienne
+  const ROOMS3D = [
+    { id: "culte", x: 232, y: 12, w: 116, d: 108, h: 46, c: 0x1B0300, n: "Salle de culte" },
+    { id: "at1", x: 286, y: 128, w: 42, d: 44, h: 26, c: 0xCAE7F7, n: "Salle atelier" },
+    { id: "at2", x: 286, y: 176, w: 42, d: 42, h: 26, c: 0xCAE7F7, n: "Salle atelier" },
+    { id: "at3", x: 78, y: 130, w: 80, d: 48, h: 26, c: 0xCAE7F7, n: "Salle atelier" },
+    { id: "at4", x: 163, y: 130, w: 86, d: 48, h: 26, c: 0xCAE7F7, n: "Salle atelier" },
+    { id: "qg", x: 78, y: 204, w: 80, d: 28, h: 22, c: 0xFFFFFF, n: "QG staff" },
+    { id: "infirmerie", x: 286, y: 222, w: 40, d: 30, h: 22, c: 0xFFFFFF, n: "Infirmerie" },
+    { id: "direction", x: 286, y: 256, w: 40, d: 30, h: 22, c: 0xFFFFFF, n: "Direction" },
+    { id: "wc1", x: 206, y: 240, w: 44, d: 30, h: 18, c: 0xF1E9E1, n: "WC" },
+    { id: "wc2", x: 194, y: 330, w: 56, d: 26, h: 18, c: 0xF1E9E1, n: "WC" },
+    { id: "stands", x: 186, y: 362, w: 64, d: 56, h: 12, c: 0xFF744F, n: "Stands" },
+    { id: "buvette", x: 175, y: 424, w: 75, d: 44, h: 12, c: 0xFFB59F, n: "Buvette" },
+    { id: "accueil", x: 286, y: 290, w: 38, d: 36, h: 20, c: 0xFFFFFF, n: "Accueil" },
+    { id: "resto", x: 168, y: 500, w: 118, d: 98, h: 30, c: 0x822E13, n: "Restaurant" },
+  ];
+  const ROOM_INFO = {
+    culte: "Soirées et plénières.", at1: "Ateliers du samedi.", at2: "Ateliers du samedi.", at3: "Ateliers du samedi.", at4: "Ateliers du samedi.",
+    qg: "L'équipe d'organisation.", infirmerie: "Équipe médicale : Lucette, Claude, Këryan.", direction: "Direction du lieu.",
+    wc1: "Toilettes.", wc2: "Toilettes.", stands: "Stands pendant les pauses.", buvette: "Boissons et en-cas (carte bancaire).",
+    accueil: "Arrivées, infos, objets trouvés. L'entrée donne sur le parking.", resto: "Tous les repas.", escalier: "Vers les chambres, au 1er étage.",
+    parking: "On entre par le portail, au bout de l'allée. Le parking fait une boucle autour d'une pelouse et mène à l'entrée du bâtiment.",
+    portail: "L'entrée du domaine, au bout de l'allée du parking.",
+    jardin: "La grande pelouse, longée par une allée qui part de l'accès jardin du bâtiment et descend jusqu'au fond du parc.",
+    sport: "Un terrain de sable et un terrain dur juste à côté du bâtiment, un espace sable plus loin, et deux courts au fond du parc, le long de l'allée.",
+    ferme: "La mini-ferme et ses animaux, à mi-chemin le long de l'allée.",
+    minigolf: "Juste après le parc animalier, le long de l'allée.",
+    tentes: "Les tentes, entre le bâtiment et les bois, côté parking.",
+    foret: "Le domaine est entouré de bois : on reste dans le parc.",
+  };
+  const OUT_NAMES = { parking: "Parking", portail: "Portail", jardin: "Le jardin", sport: "Terrains de sport", ferme: "Parc animalier", minigolf: "Minigolf", tentes: "Tentes", foret: "Les bois", escalier: "Escalier des chambres" };
+  let planMode = "2d", p3 = null, threeLoading = null;
+
+  function loadScript(src) {
+    return new Promise((ok, ko) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
+  }
+  function loadThree() {
+    if (window.THREE && window.THREE.OrbitControls) return Promise.resolve();
+    if (!threeLoading) threeLoading = loadScript("https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js")
+      .then(() => loadScript("https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"))
+      .catch((e) => { threeLoading = null; throw e; });
+    return threeLoading;
+  }
+
+  function mount3d() {
+    if (planMode !== "3d") return;
+    const host = document.getElementById("plan3d");
+    if (!host || host.dataset.ready) return;
+    host.dataset.ready = "1";
+    loadThree().then(() => build3d(host)).catch(() => {
+      host.innerHTML = '<p class="p3-msg">La vue 3D n\'a pas pu se charger. Vérifie ta connexion, ou utilise le plan 2D.</p>';
+    });
+  }
+
+  // Domaine (unités du plan : x vers la droite, y vers le bas ; le parc s'étend vers la gauche)
+  const SITE = {
+    garden: [[55, 20], [55, 640], [380, 640], [560, 700], [560, 960], [-2290, 960], [-2335, 890], [-2315, 560], [-2060, 175], [-1440, 70], [-500, 40], [-100, 25]],
+    clear: [[[-330, -60], [830, -60], [830, 965], [-330, 965]], [[340, -210], [830, -210], [830, -50], [340, -50]], [[740, -420], [820, -420], [820, -200], [740, -200]]],
+  };
+  function inPoly(x, y, p) {
+    let ins = false;
+    for (let i = 0, j = p.length - 1; i < p.length; j = i++) {
+      const [xi, yi] = p[i], [xj, yj] = p[j];
+      if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) ins = !ins;
+    }
+    return ins;
+  }
+
+  function build3d(host) {
+    if (!host.isConnected) return;
+    if (p3) { try { p3.renderer.dispose(); } catch (_) {} p3.stop = true; p3 = null; }
+    const T = window.THREE;
+    host.innerHTML = "";
+    const S3 = (v) => v / 10, cx = 180, cz = 300;
+    const P = (x, y, h) => new T.Vector3(S3(x - cx), h || 0, S3(y - cz));
+    const scene = new T.Scene();
+    scene.background = new T.Color(0xFFF8F1);
+    scene.fog = new T.Fog(0xFFF8F1, 260, 620);
+    const camera = new T.PerspectiveCamera(40, 1, 0.5, 900);
+    const renderer = new T.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = T.PCFSoftShadowMap;
+    host.appendChild(renderer.domElement);
+
+    scene.add(new T.HemisphereLight(0xFFFFFF, 0xC9D8B8, 0.8));
+    const sun = new T.DirectionalLight(0xFFFFFF, 0.6);
+    sun.position.set(-40, 90, 50); sun.target.position.set(0, 0, 0); sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    Object.assign(sun.shadow.camera, { left: -60, right: 60, top: 60, bottom: -60, near: 1, far: 300 });
+    scene.add(sun); scene.add(sun.target);
+
+    const meshes = {}, edgeMat = new T.LineBasicMaterial({ color: 0x1B0300, transparent: true, opacity: 0.55 });
+    const reg = (id, m, lift) => { m.userData = { id, baseY: m.position.y, lift: lift == null ? 0.8 : lift }; (meshes[id] = meshes[id] || []).push(m); return m; };
+    const lam = (color) => new T.MeshLambertMaterial({ color });
+
+    // ---- Sols ----
+    function flat(pts, color, yy, id) {
+      const sh = new T.Shape();
+      pts.forEach(([x, y], i) => { const X = S3(x - cx), Z = S3(y - cz); i ? sh.lineTo(X, -Z) : sh.moveTo(X, -Z); });
+      const m = new T.Mesh(new T.ShapeGeometry(sh), lam(color));
+      m.rotation.x = -Math.PI / 2; m.position.y = yy; m.receiveShadow = true; scene.add(m);
+      if (id) reg(id, m, 0);
+      return m;
+    }
+    const rect = (x, y, w, d) => [[x, y], [x + w, y], [x + w, y + d], [x, y + d]];
+    function slab(x, y, w, d, color, h, yy, id, lift) {
+      const g = new T.BoxGeometry(S3(w), h, S3(d)); const m = new T.Mesh(g, lam(color));
+      m.position.set(S3(x + w / 2 - cx), (yy || 0) + h / 2, S3(y + d / 2 - cz)); m.receiveShadow = true; scene.add(m);
+      if (id) reg(id, m, lift == null ? 0 : lift);
+      return m;
+    }
+    function seg(x1, y1, x2, y2, wid, color, h, yy, id) {
+      const len = Math.hypot(x2 - x1, y2 - y1);
+      const m = new T.Mesh(new T.BoxGeometry(S3(len), h, S3(wid)), lam(color));
+      m.position.set(S3((x1 + x2) / 2 - cx), (yy || 0) + h / 2, S3((y1 + y2) / 2 - cz));
+      m.rotation.y = -Math.atan2(y2 - y1, x2 - x1); m.receiveShadow = true; scene.add(m);
+      if (id) reg(id, m, 0);
+      return m;
+    }
+    const forestFloor = new T.Mesh(new T.PlaneGeometry(700, 360), lam(0x6E9360));
+    forestFloor.rotation.x = -Math.PI / 2; forestFloor.position.set(-90, -0.02, 10); forestFloor.receiveShadow = true; scene.add(forestFloor);
+
+    // Jardin (contour violet) + pelouses
+    flat(SITE.garden, 0xA6C886, 0.01, "jardin");
+    SITE.garden.forEach((p, i) => { const q = SITE.garden[(i + 1) % SITE.garden.length]; seg(p[0], p[1], q[0], q[1], 9, 0x7B4DFF, 0.12, 0.02); });
+    flat([[-1440, 230], [-1440, 490], [-1990, 490], [-1990, 300], [-1700, 230]], 0xCBBE8C, 0.03);
+    flat(rect(-330, -60, 400, 560), 0xA6C886, 0.01); // pelouse côté accès jardin
+    flat(rect(0, -60, 830, 1025).map(([x, y]) => [x, y]), 0x93B67A, 0.005);
+    // Croix au sol sur la pelouse
+    slab(-140, 108, 60, 14, 0xD9534A, 0.06, 0.02); slab(-117, 85, 14, 60, 0xD9534A, 0.06, 0.02);
+
+    // Bâtiment : dalle
+    // Bâtiment : emprise réelle (vue aérienne), murs bas en coupe
+    const FOOT = [[73, 125], [230, 125], [230, 10], [350, 10], [350, 122], [333, 122], [325, 490], [340, 490], [340, 603], [165, 603], [165, 490], [208, 235], [73, 235]];
+    const floor = flat(FOOT, 0xF3E6D6, 0.18);
+    FOOT.forEach((p, i) => { const q = FOOT[(i + 1) % FOOT.length]; const w = seg(p[0], p[1], q[0], q[1], 2.2, 0xE4D6C6, 1.1, 0.18); w.castShadow = true; w.add(new T.LineSegments(new T.EdgesGeometry(w.geometry), edgeMat)); });
+    flat([[208, 228], [150, 242], [128, 604], [163, 604], [163, 490]], 0xE7D6BC, 0.06); // terrasse
+    const annexe = slab(330, 360, 113, 118, 0xE3DACB, 1.4, 0); annexe.castShadow = true; annexe.add(new T.LineSegments(new T.EdgesGeometry(annexe.geometry), edgeMat));
+    const tech = slab(290, 490, 50, 113, 0xCFCBC6, 1.6, 0); tech.castShadow = true; tech.add(new T.LineSegments(new T.EdgesGeometry(tech.geometry), edgeMat));
+
+    // Allées
+    const gravel = 0xE7DAC2;
+    seg(130, 512, -330, 512, 16, gravel, 0.08, 0.02);
+    seg(-330, 512, -1760, 512, 16, gravel, 0.08, 0.02);
+    seg(-120, 512, -120, 600, 10, gravel, 0.08, 0.02);
+    seg(380, 470, 470, 560, 10, gravel, 0.08, 0.02);
+
+    // ---- Parking, portail, cour d'entrée ----
+    const asph = 0x9A958F, pk = lam(asph);
+    const road = (x, y, w, d) => { const m = new T.Mesh(new T.BoxGeometry(S3(w), 0.1, S3(d)), pk); m.position.set(S3(x + w / 2 - cx), 0.05, S3(y + d / 2 - cz)); m.receiveShadow = true; scene.add(m); return reg("parking", m, 0); };
+    road(360, -60, 70, 360); road(360, 235, 440, 65); road(760, -170, 42, 470); road(762, -420, 38, 250);
+    road(330, 300, 158, 58); road(443, 355, 45, 200); road(342, 480, 146, 76); // parvis de l'entrée, voie, places
+    flat(rect(430, -55, 330, 290), 0xA6C886, 0.03);
+    const carCols = [0x2F4858, 0xEDEDED, 0xB23A3A, 0x51545C, 0x2B2B2B, 0xD8D2C4];
+    [[395, -20], [395, 30], [395, 80], [395, 130], [500, 268], [560, 268], [620, 268], [365, 500], [395, 500]].forEach(([x, y], i) => {
+      const along = i >= 4;
+      const c = new T.Mesh(new T.BoxGeometry(along ? 2.2 : 4, 1.1, along ? 4 : 2.2), lam(carCols[i % carCols.length]));
+      c.position.copy(P(x, y, 0.65)); c.castShadow = true; scene.add(c);
+    });
+    // Portail (noir)
+    const gateMat = lam(0x1B1B1B);
+    [[752, -178], [810, -178]].forEach(([x, y]) => { const m = new T.Mesh(new T.BoxGeometry(1, 3.2, 1), gateMat); m.position.copy(P(x, y, 1.6)); m.castShadow = true; scene.add(m); reg("portail", m, 0.4); });
+    for (let i = 0; i < 7; i++) { const m = new T.Mesh(new T.BoxGeometry(0.18, 2.2, 0.18), gateMat); m.position.copy(P(758 + i * 7.5, -178, 1.2)); scene.add(m); reg("portail", m, 0.4); }
+    [0.4, 2.2].forEach((h) => { const m = new T.Mesh(new T.BoxGeometry(5.6, 0.2, 0.2), gateMat); m.position.copy(P(781, -178, h)); scene.add(m); reg("portail", m, 0.4); });
+
+    // Cabanons
+    [[630, 420, 60, 100, 0x6F7A86], [540, 540, 45, 35, 0x58626B], [540, 735, 45, 32, 0x58626B], [-60, -30, 55, 50, 0x3F454B]].forEach(([x, y, w, d, c]) => {
+      const m = slab(x, y, w, d, c, 2.6, 0); m.castShadow = true;
+    });
+
+    // Tentes
+    const tentMat = lam(0xFFFFFF);
+    [[473, 745], [648, 755], [723, 760], [463, 830], [548, 825], [643, 830], [713, 840]].forEach(([x, y], i) => {
+      const base = new T.Mesh(new T.BoxGeometry(3.8, 1.4, 3.8), tentMat); base.position.copy(P(x, y, 0.7));
+      const roof = new T.Mesh(new T.ConeGeometry(2.95, 2.2, 4), tentMat); roof.position.copy(P(x, y, 2.5)); roof.rotation.y = Math.PI / 4;
+      const rot = 0.35 + (i % 3) * 0.12; base.rotation.y = rot; roof.rotation.y += rot;
+      [base, roof].forEach((m) => { m.castShadow = true; m.receiveShadow = true; scene.add(m); });
+    });
+
+    // ---- Terrains de sport ----
+    const sportMat = (c) => lam(c);
+    function court(x, y, w, d, c, lines) {
+      const m = new T.Mesh(new T.BoxGeometry(S3(w), 0.14, S3(d)), sportMat(c)); m.position.set(S3(x + w / 2 - cx), 0.07, S3(y + d / 2 - cz)); m.receiveShadow = true; scene.add(m); reg("sport", m, 0.3);
+      if (lines) {
+        const lm = lam(0xFFFFFF), t = 0.25, add = (X, Z, W, D) => { const l = new T.Mesh(new T.BoxGeometry(W, 0.05, D), lm); l.position.set(X, 0.16, Z); scene.add(l); reg("sport", l, 0.3); };
+        const X = S3(x + w / 2 - cx), Z = S3(y + d / 2 - cz), W = S3(w) - 1.6, D = S3(d) - 1.6;
+        add(X, Z - D / 2, W, t); add(X, Z + D / 2, W, t); add(X - W / 2, Z, t, D); add(X + W / 2, Z, t, D);
+        if (w > d) add(X, Z, t, D); else add(X, Z, W, t);
+      }
+    }
+    court(-150, 612, 205, 110, 0xE2CC9A, true);   // terrain de sable
+    court(85, 648, 215, 112, 0x6E6A78, true);     // terrain dur
+    court(-1205, 750, 175, 75, 0xE2CC9A, false);  // espace sable
+    flat(rect(-1545, 570, 245, 275), 0xD9D4CB, 0.04);
+    court(-1530, 585, 215, 115, 0xC8643B, true);  // courts
+    court(-1530, 715, 215, 115, 0xC8643B, true);
+
+    // ---- Parc animalier ----
+    flat(rect(-605, 690, 265, 215), 0xB9D99B, 0.04, "ferme");
+    const wood = lam(0x8B6A4A);
+    [[-605, 690, -340, 690], [-340, 690, -340, 905], [-340, 905, -605, 905], [-605, 905, -605, 690]].forEach(([a, b, c, d]) => {
+      const f = seg(a, b, c, d, 2.5, 0x9ED4EE, 0.9, 0.05); reg("ferme", f, 0.3);
+      const len = Math.hypot(c - a, d - b), n = Math.round(len / 30);
+      for (let i = 0; i <= n; i++) { const p = new T.Mesh(new T.BoxGeometry(0.35, 1.5, 0.35), wood); p.position.copy(P(a + (c - a) * i / n, b + (d - b) * i / n, 0.75)); scene.add(p); }
+    });
+    const shelter = new T.Mesh(new T.CylinderGeometry(2.4, 2.4, 2, 20), lam(0xFFFFFF)); shelter.position.copy(P(-467, 855, 1)); shelter.castShadow = true; scene.add(shelter); reg("ferme", shelter, 0.4);
+    const sroof = new T.Mesh(new T.ConeGeometry(2.9, 1.6, 20), lam(0xEDE6DA)); sroof.position.copy(P(-467, 855, 2.8)); sroof.castShadow = true; scene.add(sroof); reg("ferme", sroof, 0.4);
+    const barn = new T.Mesh(new T.BoxGeometry(5, 2.6, 3.4), lam(0x9A4A2E)); barn.position.copy(P(-560, 730, 1.3)); barn.castShadow = true; scene.add(barn); reg("ferme", barn, 0.4);
+    const broof = new T.Mesh(new T.CylinderGeometry(2.1, 2.1, 5.2, 3), lam(0x5B3A2A)); broof.rotation.z = Math.PI / 2; broof.position.copy(P(-560, 730, 3.2)); broof.castShadow = true; scene.add(broof); reg("ferme", broof, 0.4);
+    const animal = (x, y, c, s) => { const a = new T.Mesh(new T.SphereGeometry(0.55 * s, 10, 8), lam(c)); a.scale.set(1.5, 1, 1); a.position.copy(P(x, y, 0.6 * s)); a.castShadow = true; scene.add(a); };
+    [[-420, 745, 0xFFFFFF, 1], [-445, 770, 0xF4F1EA, 1], [-395, 790, 0xFFFFFF, 1], [-520, 800, 0x5A3D2B, 1.3], [-490, 760, 0xE9E1D3, 1]].forEach((a) => animal(...a));
+
+    // ---- Minigolf ----
+    flat(rect(-865, 590, 280, 240), 0xEAD7B9, 0.04, "minigolf");
+    const felt = lam(0x4E9E5A), flag = lam(0xFF744F), white = lam(0xFFFFFF);
+    [[-850, 605, 110, 26], [-720, 605, 110, 26], [-850, 650, 26, 120], [-790, 660, 120, 26], [-790, 715, 26, 100], [-720, 720, 110, 26], [-850, 790, 120, 26], [-700, 775, 26, 45], [-650, 650, 26, 120]].forEach(([x, y, w, d], i) => {
+      const m = slab(x, y, w, d, 0x4E9E5A, 0.2, 0.05, "minigolf", 0.3); m.material = felt;
+      const fl = new T.Mesh(new T.CylinderGeometry(0.06, 0.06, 1.6, 6), white); fl.position.copy(P(x + w - 10, y + d - 10, 1)); scene.add(fl);
+      const fg = new T.Mesh(new T.BoxGeometry(0.6, 0.4, 0.05), flag); fg.position.copy(P(x + w - 10, y + d - 10, 1.6)); fg.position.x += 0.3; scene.add(fg);
+    });
+
+    // ---- Maisons voisines ----
+    [[-1480, -110], [-1600, -125], [-1730, -100], [-1860, -120], [-1990, -105], [-2120, -125]].forEach(([x, y], i) => {
+      const h = new T.Mesh(new T.BoxGeometry(5.5, 3, 4.5), lam(0xF2ECE2)); h.position.copy(P(x, y, 1.5)); h.castShadow = true; scene.add(h);
+      const r = new T.Mesh(new T.CylinderGeometry(3.4, 3.4, 5.8, 3), lam(i % 2 ? 0xB5523B : 0xC4643F)); r.rotation.z = Math.PI / 2; r.position.copy(P(x, y, 4.1)); r.castShadow = true; scene.add(r);
+    });
+
+    // ---- Arbres (forêt autour du domaine + bosquets) ----
+    let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+    const trees = [];
+    const isClear = (x, y) => inPoly(x, y, SITE.garden) || SITE.clear.some((p) => inPoly(x, y, p));
+    const houseNear = (x, y) => y < -40 && y > -200 && x < -1420 && x > -2200;
+    for (let x = -2620; x <= 1080; x += 62) for (let y = -460; y <= 1300; y += 62) {
+      const X = x + (rnd() - 0.5) * 50, Y = y + (rnd() - 0.5) * 50;
+      if (isClear(X, Y) || houseNear(X, Y)) continue;
+      trees.push([X, Y, 0.8 + rnd() * 0.6, rnd() < 0.22]);
+    }
+    const clump = (x1, y1, x2, y2, n, big) => { for (let i = 0; i < n; i++) trees.push([x1 + rnd() * (x2 - x1), y1 + rnd() * (y2 - y1), (big || 0.85) + rnd() * 0.45, rnd() < 0.1]); };
+    // dans le parc
+    clump(-2000, 30, -60, 120, 70); clump(-450, 140, -320, 320, 4, 1.1); clump(-1020, 130, -640, 300, 10, 1.1); clump(-1440, 130, -1140, 330, 8, 1.1);
+    clump(-1980, 120, -1440, 300, 12); clump(-2280, 120, -1990, 900, 70); clump(-1990, 560, -1560, 930, 26);
+    clump(-1000, 590, -875, 880, 12); clump(-1290, 560, -1240, 900, 7); clump(-2000, 920, 0, 955, 70, 0.75);
+    for (let x = -300; x > -1760; x -= 34) trees.push([x, 538 + rnd() * 8, 0.55 + rnd() * 0.2, false]);
+    // autour du bâtiment
+    clump(-320, 120, -150, 260, 4, 1.2); clump(-90, 30, -20, 110, 2, 1.1); clump(480, 320, 700, 700, 12, 1); clump(-320, 830, 380, 950, 12, 1);
+    clump(-60, -60, 330, -20, 6, 1);
+    const N = trees.length;
+    const trunkG = new T.CylinderGeometry(0.22, 0.32, 1.6, 6), leafG = new T.IcosahedronGeometry(1.9, 0), pineG = new T.ConeGeometry(1.6, 4.2, 7);
+    const trunk = new T.InstancedMesh(trunkG, lam(0x6B4A33), N);
+    const nb = trees.filter((t) => !t[3]).length;
+    const leaf = new T.InstancedMesh(leafG, lam(0xFFFFFF), Math.max(1, nb)), pine = new T.InstancedMesh(pineG, lam(0xFFFFFF), Math.max(1, N - nb));
+    const o = new T.Object3D(), col = new T.Color(), greens = [0x4F7F45, 0x5E8F4E, 0x3F6B3A, 0x6C9A55, 0x46703F];
+    let li = 0, pi = 0;
+    trees.forEach(([x, y, s, conifer], i) => {
+      const p = P(x, y);
+      o.position.set(p.x, 0.8 * s, p.z); o.rotation.set(0, rnd() * 6.28, 0); o.scale.set(s, s, s); o.updateMatrix(); trunk.setMatrixAt(i, o.matrix);
+      col.setHex(greens[Math.floor(rnd() * greens.length)]);
+      if (conifer) { o.position.y = 3.4 * s; o.updateMatrix(); pine.setMatrixAt(pi, o.matrix); pine.setColorAt(pi++, col.multiplyScalar(0.85)); }
+      else { o.position.y = 2.9 * s; o.scale.set(s * 1.15, s, s * 1.15); o.updateMatrix(); leaf.setMatrixAt(li, o.matrix); leaf.setColorAt(li++, col); }
+    });
+    leaf.count = li; pine.count = pi;
+    [trunk, leaf, pine].forEach((m) => { m.castShadow = true; m.receiveShadow = true; scene.add(m); });
+
+    // ---- Intérieur du bâtiment ----
+    const corMat = lam(0xBFE0F3);
+    [[[253, 124], [284, 124], [282, 330], [327, 330], [327, 360], [281, 360], [279, 494], [168, 494], [171, 472], [252, 470]], [[76, 181], [253, 181], [253, 201], [76, 201]]].forEach((pts) => flat(pts, 0xBFE0F3, 0.21));
+
+    function addBox(id, x, y, w, d, h, color, yBase) {
+      const g = new T.BoxGeometry(S3(w) - 0.12, S3(h), S3(d) - 0.12);
+      const m = new T.Mesh(g, lam(color));
+      m.position.set(S3(x + w / 2 - cx), (yBase || 0.18) + S3(h) / 2, S3(y + d / 2 - cz));
+      m.castShadow = true; m.receiveShadow = true;
+      m.add(new T.LineSegments(new T.EdgesGeometry(g), edgeMat));
+      scene.add(m); return reg(id, m);
+    }
+    ROOMS3D.forEach((r) => addBox(r.id, r.x, r.y, r.w, r.d, r.h, r.c));
+    for (let i = 0; i < 6; i++) addBox("escalier", 200, 276 + i * 8, 50, 8, 6 + i * 6, 0xFFE3DA);
+
+    // Flèches entrée / jardin
+    function arrow(x, y, color) {
+      const m = new T.Mesh(new T.ConeGeometry(0.9, 2.2, 18), lam(color));
+      m.rotation.z = Math.PI / 2; m.position.copy(P(x, y, 1.3)); m.castShadow = true; scene.add(m);
+    }
+    arrow(338, 345, 0xFF744F);
+    arrow(118, 512, 0x822E13);
+
+    // ---- Étiquettes HTML ----
+    const layer = document.getElementById("p3-labels");
+    const labels = [];
+    const mk = (id, text, pos, cls, far) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "p3-label" + (cls ? " " + cls : ""); b.textContent = text; b.dataset.room = id;
+      layer.appendChild(b); labels.push({ el: b, pos, far: !!far });
+    };
+    ROOMS3D.forEach((r) => { if (r.id === "wc2") return; mk(r.id, r.n.replace("Salle atelier", "Atelier"), new T.Vector3(S3(r.x + r.w / 2 - cx), S3(r.h) + 1, S3(r.y + r.d / 2 - cz))); });
+    mk("escalier", "Chambres ↑", P(225, 300, 4.6));
+    mk("accueil", "Entrée", P(352, 345, 2.8), "p3-entree", 1);
+    mk("jardin", "Accès jardin", P(95, 512, 2.8), "p3-jardin");
+    mk("portail", "Portail", P(781, -178, 4.6), "p3-out p3-dark", 1);
+    mk("parking", "Parking", P(595, 90, 2), "p3-out", 1);
+    mk("jardin", "Le jardin", P(-900, 330, 2), "p3-out", 1);
+    mk("sport", "Terrains de sport", P(75, 690, 2), "p3-out", 1);
+    mk("sport", "Courts", P(-1422, 715, 2), "p3-out", 1);
+    mk("sport", "Espace sable", P(-1118, 787, 2), "p3-out", 1);
+    mk("ferme", "Parc animalier", P(-472, 797, 4.5), "p3-out p3-blue", 1);
+    mk("minigolf", "Minigolf", P(-725, 710, 2.4), "p3-out p3-beige", 1);
+    mk("foret", "Bois", P(-2450, 450, 9), "p3-out p3-wood", 1);
+    mk("foret", "Bois", P(980, 300, 9), "p3-out p3-wood", 1);
+
+    // ---- Caméra & contrôles ----
+    const controls = new T.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; controls.dampingFactor = 0.08;
+    controls.minDistance = 14; controls.maxDistance = 420;
+    controls.maxPolarAngle = Math.PI / 2.25;
+    let fly = null;
+    const flyTo = (tgt, pos) => { fly = { tgt, pos }; };
+    const VIEWS = {
+      bat: () => { const k = Math.min(1.7, Math.max(1, 1.0 / (camera.aspect || 1))); return [new T.Vector3(2.5, 0, 3.5), new T.Vector3(2.5 + 9 * k, 50 * k, 3.5 + 32 * k)]; },
+      site: () => { const k = Math.min(1.5, Math.max(1, 0.85 / (camera.aspect || 1))); return [new T.Vector3(-88, 0, 12), new T.Vector3(-88 + 205 * k, 250 * k, 12 + 40 * k)]; },
+    };
+    let view = "bat";
+    const setView = (name, instant) => {
+      view = name; const [t, p] = VIEWS[name]();
+      if (instant) { fly = null; controls.target.copy(t); camera.position.copy(p); controls.update(); } else flyTo(t, p);
+      document.querySelectorAll("[data-p3-view]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.p3View === name)));
+    };
+    renderer.domElement.addEventListener("pointerdown", () => { fly = null; }, true);
+    renderer.domElement.addEventListener("wheel", () => { fly = null; }, { passive: true });
+
+    let selected = null;
+    const outIds = { parking: 1, portail: 1, jardin: 1, sport: 1, ferme: 1, minigolf: 1, tentes: 1 };
+    function select(id) {
+      selected = id;
+      Object.keys(meshes).forEach((k) => meshes[k].forEach((m) => {
+        const on = k === id;
+        m.material.emissive = new T.Color(on ? 0xFF744F : 0x000000);
+        m.material.emissiveIntensity = on ? (outIds[k] ? 0.14 : 0.45) : 0;
+        m.userData.target = m.userData.baseY + (on ? m.userData.lift : 0);
+      }));
+      labels.forEach((l) => l.el.classList.toggle("on", l.el.dataset.room === id && !l.el.classList.contains("p3-entree") && !l.el.classList.contains("p3-jardin")));
+      const r = ROOMS3D.find((x) => x.id === id);
+      const info = document.getElementById("p3-info");
+      if (info) info.innerHTML = id ? "<b>" + esc(r ? r.n : OUT_NAMES[id] || id) + "</b><span>" + esc(ROOM_INFO[id] || "") + "</span>" : '<span>Touche une salle ou un espace pour le mettre en valeur.</span>';
+      if (!id || !meshes[id]) return;
+      if (id === "sport" || id === "jardin") { const [t, p] = VIEWS.site(); flyTo(t, p); return; }
+      const box = new T.Box3(); meshes[id].forEach((m) => box.expandByObject(m));
+      const c = box.getCenter(new T.Vector3()); c.y = 0;
+      const size = box.getSize(new T.Vector3()), span = Math.max(size.x, size.z);
+      const dir = camera.position.clone().sub(controls.target).normalize();
+      const cur = camera.position.distanceTo(controls.target);
+      const want = outIds[id] ? Math.min(Math.max(span * 1.6, 45), 170) : Math.min(cur, 75);
+      if (!outIds[id] && cur <= 90) { flyTo(controls.target.clone().lerp(c, 0.6), null); return; }
+      if (dir.y < 0.55) { dir.y = 0.75; dir.normalize(); }
+      flyTo(c, c.clone().add(dir.multiplyScalar(want)));
+    }
+
+    // Toucher une pièce / un espace
+    const ray = new T.Raycaster(), ptr = new T.Vector2(); let down = null;
+    renderer.domElement.addEventListener("pointerdown", (e) => { down = [e.clientX, e.clientY]; });
+    renderer.domElement.addEventListener("pointerup", (e) => {
+      if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return;
+      const rc = renderer.domElement.getBoundingClientRect();
+      ptr.set(((e.clientX - rc.left) / rc.width) * 2 - 1, -((e.clientY - rc.top) / rc.height) * 2 + 1);
+      ray.setFromCamera(ptr, camera);
+      const hit = ray.intersectObjects([].concat(...Object.values(meshes)), false)[0];
+      select(hit ? hit.object.userData.id : null);
+    });
+
+    function resize() {
+      const w = host.clientWidth || 300, h = host.clientHeight || 380;
+      renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+    }
+    const ro = window.ResizeObserver ? new ResizeObserver(resize) : null; if (ro) ro.observe(host); resize(); setView("bat", true);
+
+    const v = new T.Vector3();
+    const state = { renderer, stop: false, select, home: () => setView(view), setView };
+    p3 = state;
+    (function loop() {
+      if (state.stop || !host.isConnected) { if (ro) ro.disconnect(); try { renderer.dispose(); } catch (_) {} return; }
+      requestAnimationFrame(loop);
+      if (host.offsetParent === null) return;
+      if (fly) {
+        controls.target.lerp(fly.tgt, 0.12);
+        if (fly.pos) camera.position.lerp(fly.pos, 0.12);
+        if (controls.target.distanceTo(fly.tgt) < 0.05 && (!fly.pos || camera.position.distanceTo(fly.pos) < 0.1)) fly = null;
+      }
+      controls.update();
+      // l'ombre suit la zone regardée
+      sun.target.position.copy(controls.target); sun.position.copy(controls.target).add(new T.Vector3(-40, 90, 50));
+      const dist = camera.position.distanceTo(controls.target);
+      const sc = Math.min(200, Math.max(45, dist * 0.9));
+      if (sun.shadow.camera.right !== sc) { Object.assign(sun.shadow.camera, { left: -sc, right: sc, top: sc, bottom: -sc }); sun.shadow.camera.updateProjectionMatrix(); }
+      Object.values(meshes).forEach((arr) => arr.forEach((m) => { const t = m.userData.target; if (t != null) m.position.y += (t - m.position.y) * 0.15; }));
+      renderer.render(scene, camera);
+      const w = host.clientWidth, h = host.clientHeight, near = dist < 110;
+      labels.forEach((l) => {
+        v.copy(l.pos).project(camera);
+        const vis = (l.far || near || l.el.classList.contains("on")) && v.z < 1 && Math.abs(v.x) < 1.05 && Math.abs(v.y) < 1.05;
+        l.el.style.display = vis ? "" : "none";
+        if (vis) l.el.style.transform = "translate(-50%,-50%) translate(" + ((v.x + 1) / 2 * w).toFixed(1) + "px," + ((1 - v.y) / 2 * h).toFixed(1) + "px)";
+      });
+    })();
+    select(null);
+  }
+
+  let planZoom = false;
+  const note = (txt) => '<div class="note" role="note"><span>✎</span><span>' + txt + "</span></div>";
+  function renderPlan() {
+    const is3d = planMode === "3d";
+    const zone = ([c, line, t, d, ids]) => (is3d ? '<button class="zone zone-btn" data-room="' + ids[0] + '">' : '<div class="zone">') +
+      '<i style="background:' + c + (line ? ";box-shadow:inset 0 0 0 1.5px #1B0300" : "") + '"></i><div><b>' + t + "</b><span>" + d + "</span></div>" + (is3d ? "</button>" : "</div>");
+    document.getElementById("t-plan").innerHTML =
+      note("<b>Plan schématique.</b> Les proportions ne sont pas à l'échelle.") + '<div style="height:12px"></div>' +
+      '<div class="seg" role="tablist"><button data-plan-mode="2d" aria-selected="' + !is3d + '">Plan 2D</button><button data-plan-mode="3d" aria-selected="' + is3d + '">Vue 3D</button></div>' +
+      (is3d
+        ? '<div class="map-card p3-card"><div class="p3-wrap"><div id="plan3d" class="p3"><p class="p3-msg">Chargement de la vue 3D…</p></div><div id="p3-labels" class="p3-labels"></div>' +
+            '<div class="p3-views"><button data-p3-view="bat" aria-pressed="true">Bâtiment</button><button data-p3-view="site" aria-pressed="false">Tout le site</button></div></div>' +
+            '<div class="p3-hint">Glisse pour tourner · pince pour zoomer · touche un espace</div><div id="p3-info" class="p3-info"></div></div>'
+        : '<div class="map-card"><div class="plan-img' + (planZoom ? " zoom" : "") + '" data-planzoom>' + PLAN_SVG + '</div><div class="plan-hint">Touche le plan pour zoomer</div></div>') +
+      '<div class="section-label">Dans le bâtiment</div><div class="zones">' + REPERES.filter((r) => !r[5]).map(zone).join("") + "</div>" +
+      '<div class="section-label">À l\'extérieur</div><div class="zones">' + REPERES.filter((r) => r[5]).map(zone).join("") + "</div>";
+    mount3d();
+  }
+  renderPlan();
+  document.getElementById("t-plan").addEventListener("click", (e) => {
+    const t = e.target.closest("button, [data-planzoom]"); if (!t) return;
+    const d = t.dataset;
+    if (t.hasAttribute("data-planzoom")) { planZoom = !planZoom; t.classList.toggle("zoom", planZoom); return; }
+    if (d.planMode) { if (d.planMode !== planMode) { planMode = d.planMode; renderPlan(); } return; }
+    if (d.p3View) { if (p3) { p3.select(null); p3.setView(d.p3View); } return; }
+    if (d.room) { if (p3) { p3.select(d.room); if (t.classList.contains("zone-btn")) document.querySelector(".p3-card").scrollIntoView({ behavior: "smooth", block: "start" }); } }
+  });
 })();
 </script>
 
