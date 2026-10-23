@@ -787,7 +787,10 @@ a { color: inherit; }
     }
     if (n >= last.end) return { chip: "Merci !", html: '<div class="lbl">C\'est terminé</div><div class="big">Merci pour ce week-end</div><div class="sub">Retrouve le récap des ateliers et des célébrations.</div><div class="next"><a href="#recap" style="color:var(--blues);font-weight:600">Voir le récap ›</a></div>' };
     const c = slots.find((s) => s.start <= n && n < s.end), nx = slots.find((s) => s.start > n);
-    return { chip: "En direct",
+    const mid = (t) => { const x = new Date(t); x.setHours(0, 0, 0, 0); return x; };
+    const nDays = Math.max(1, Math.round((mid(last.start) - mid(first.start)) / 864e5) + 1);
+    const dayNo = Math.min(nDays, Math.max(1, Math.round((mid(n) - mid(first.start)) / 864e5) + 1));
+    return { chip: "Jour " + dayNo,
       html: '<div class="lbl">En ce moment</div><div class="big">' + esc(c ? c.it.titre : "Temps libre") + "</div>" +
         '<div class="sub">' + (c ? esc(c.it.h) + (c.it.lieu ? " · " + esc(c.it.lieu) : "") + (c.it.avec ? " · avec " + esc(c.it.avec) : "") : "") + "</div>" +
         (nx ? '<div class="next">À suivre : <b>' + esc(nx.it.h) + " · " + esc(nx.it.titre) + "</b>" + (nx.it.lieu ? " · " + esc(nx.it.lieu) : "") + "</div>" : "") };
