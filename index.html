@@ -1544,36 +1544,64 @@ a { color: inherit; }
           '<span class="aud-btns"><button data-aud-act="back" aria-label="Reculer de 15 secondes">−15 s</button><button data-aud-act="fwd" aria-label="Avancer de 15 secondes">+15 s</button><button data-aud-act="rate" aria-label="Vitesse de lecture">×1</button></span></div>' +
       "</div></div>";
   }
-  const AUD = { el: null, p: null, i: 0, base: 0, rate: 1, prefetched: {} };
-  function audEl() {
-    if (AUD.el) return AUD.el;
-    const a = AUD.el = new Audio(); a.preload = "auto";
-    a.addEventListener("timeupdate", audTick);
-    a.addEventListener("play", audUI); a.addEventListener("pause", audUI);
-    a.addEventListener("ended", () => { if (!AUD.p) return; if (AUD.i + 1 < AUD.p.audio.parts.length) audLoad(AUD.i + 1, 0, true); else { AUD.i = 0; AUD.base = 0; audUI(); } });
-    a.addEventListener("error", () => { if (AUD.p) toast("Le morceau audio n'a pas pu être chargé."); });
+  // Deux lecteurs en alternance : le morceau suivant est préchargé dans le second,
+  // puis lancé à la milliseconde où le premier se termine (pas de blanc entre deux morceaux).
+  const AUD = { els: [], el: null, p: null, i: 0, base: 0, rate: 1, pre: -1, raf: 0 };
+  function audMk() {
+    const a = new Audio(); a.preload = "auto";
+    a.addEventListener("timeupdate", () => { if (a === AUD.el) audTick(); });
+    a.addEventListener("play", () => { if (a === AUD.el) { audUI(); audLoop(); } });
+    a.addEventListener("pause", () => { if (a === AUD.el) audUI(); });
+    a.addEventListener("ended", () => { if (a === AUD.el) audNext(true); });
+    a.addEventListener("error", () => { if (a === AUD.el && AUD.p) toast("Le morceau audio n'a pas pu être chargé."); });
     return a;
   }
+  function audEl() {
+    if (!AUD.els.length) { AUD.els = [audMk(), audMk()]; AUD.el = AUD.els[0]; }
+    return AUD.el;
+  }
+  const audOther = () => (AUD.el === AUD.els[0] ? AUD.els[1] : AUD.els[0]);
   function audLoad(i, offset, play) {
-    const a = audEl(), parts = AUD.p.audio.parts;
-    AUD.i = i; AUD.base = parts.slice(0, i).reduce((s, x) => s + x.d, 0);
-    a.src = parts[i].f; a.playbackRate = AUD.rate;
-    const go = () => { try { a.currentTime = offset || 0; } catch (_) {} if (play) a.play().catch(() => audUI()); };
-    if (offset) a.addEventListener("loadedmetadata", go, { once: true }); else go();
+    audEl(); const parts = AUD.p.audio.parts;
+    let old = null;
+    if (AUD.pre === i) { old = AUD.el; AUD.el = audOther(); }
+    else { AUD.el.src = parts[i].f; }
+    AUD.pre = -1; AUD.i = i; AUD.base = parts.slice(0, i).reduce((s, x) => s + x.d, 0);
+    const a = AUD.el; a.playbackRate = AUD.rate;
+    const go = () => { try { a.currentTime = offset || 0; } catch (_) {} if (play) a.play().catch(() => audUI()); if (old) old.pause(); };
+    if (offset && a.readyState < 1) a.addEventListener("loadedmetadata", go, { once: true }); else go();
     audUI();
   }
-  function audPrefetch() {
-    const parts = AUD.p && AUD.p.audio.parts, n = parts && parts[AUD.i + 1];
-    if (!n || AUD.prefetched[n.f]) return;
-    AUD.prefetched[n.f] = 1; fetch(n.f).catch(() => { AUD.prefetched[n.f] = 0; });
+  function audPreload() {
+    const parts = AUD.p && AUD.p.audio.parts, j = AUD.i + 1;
+    if (!parts || j >= parts.length || AUD.pre === j) return;
+    const o = audOther(); o.pause(); o.src = parts[j].f; o.load(); AUD.pre = j;
+  }
+  function audNext(fromEnded) {
+    const parts = AUD.p && AUD.p.audio.parts; if (!parts) return;
+    if (AUD.i + 1 >= parts.length) { if (fromEnded) { AUD.i = 0; AUD.base = 0; AUD.pre = -1; AUD.el.src = parts[0].f; audUI(); } return; }
+    audLoad(AUD.i + 1, 0, true);
+  }
+  function audLoop() {
+    cancelAnimationFrame(AUD.raf);
+    const step = () => {
+      const a = AUD.el; if (!a || a.paused) return;
+      const left = (a.duration || 0) - a.currentTime;
+      if (a.duration && left < 30) audPreload();
+      const o = audOther();
+      if (AUD.pre === AUD.i + 1 && a.duration && left <= 0.035 * AUD.rate && o.readyState >= 3) { audNext(false); return; }
+      AUD.raf = requestAnimationFrame(step);
+    };
+    AUD.raf = requestAnimationFrame(step);
   }
   function audSeekTo(p, t) {
     const parts = p.audio.parts; let i = 0, acc = 0;
     t = Math.max(0, Math.min(t, audTotal(p) - 0.5));
     while (i < parts.length - 1 && acc + parts[i].d <= t) { acc += parts[i].d; i++; }
-    const playing = AUD.el && !AUD.el.paused && AUD.p === p;
-    if (AUD.p !== p) { if (AUD.el) AUD.el.pause(); AUD.p = p; }
-    if (AUD.i === i && AUD.el && AUD.el.src && AUD.p === p && AUD.el.src.indexOf(parts[i].f) > -1) { AUD.el.currentTime = t - acc; }
+    audEl();
+    const playing = !AUD.el.paused && AUD.p === p;
+    if (AUD.p !== p) { AUD.el.pause(); AUD.p = p; AUD.pre = -1; }
+    if (AUD.i === i && AUD.el.src && AUD.el.src.indexOf(parts[i].f) > -1) AUD.el.currentTime = t - acc;
     else audLoad(i, t - acc, playing);
     audUI();
   }
@@ -1581,7 +1609,7 @@ a { color: inherit; }
     if (!AUD.p) return;
     const t = AUD.base + (AUD.el.currentTime || 0), box = document.querySelector('.aud[data-aud="' + AUD.p.id + '"]');
     if (box) { const r = box.querySelector("[data-aud-seek]"); if (r && !r.matches(":active")) r.value = Math.round(t); const c = box.querySelector("[data-aud-cur]"); if (c) c.textContent = fmtT(t); }
-    const d = AUD.el.duration; if (d && d - AUD.el.currentTime < 45) audPrefetch();
+    const d = AUD.el.duration; if (d && d - AUD.el.currentTime < 30) audPreload();
     if ("mediaSession" in navigator && navigator.mediaSession.setPositionState) { try { navigator.mediaSession.setPositionState({ duration: audTotal(AUD.p), playbackRate: AUD.rate, position: Math.min(t, audTotal(AUD.p)) }); } catch (_) {} }
   }
   function audUI() {
@@ -1608,14 +1636,14 @@ a { color: inherit; }
     const box = b.closest(".aud"), p = preds().find((x) => x.id === box.dataset.aud); if (!p) return;
     const act = b.dataset.audAct, a = audEl();
     if (act === "toggle") {
-      if (AUD.p !== p) { a.pause(); AUD.p = p; audSession(p); audLoad(0, 0, true); track("prédication: écoute " + p.id, p.titre, true); return; }
+      if (AUD.p !== p) { a.pause(); AUD.p = p; AUD.pre = -1; audSession(p); audLoad(0, 0, true); track("prédication: écoute " + p.id, p.titre, true); return; }
       if (a.paused) a.play().catch(() => {}); else a.pause();
       return;
     }
-    if (AUD.p !== p) { AUD.p = p; audSession(p); audLoad(0, 0, false); }
+    if (AUD.p !== p) { AUD.p = p; AUD.pre = -1; audSession(p); audLoad(0, 0, false); }
     if (act === "back") audSeekTo(p, AUD.base + a.currentTime - 15);
     else if (act === "fwd") audSeekTo(p, AUD.base + a.currentTime + 15);
-    else if (act === "rate") { AUD.rate = AUD.rate === 1 ? 1.25 : AUD.rate === 1.25 ? 1.5 : 1; a.playbackRate = AUD.rate; audUI(); }
+    else if (act === "rate") { AUD.rate = AUD.rate === 1 ? 1.25 : AUD.rate === 1.25 ? 1.5 : 1; AUD.els.forEach((x) => (x.playbackRate = AUD.rate)); audUI(); }
   });
   document.addEventListener("change", (e) => {
     const r = e.target.closest && e.target.closest("[data-aud-seek]"); if (!r) return;
