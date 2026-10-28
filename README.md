@@ -35,6 +35,13 @@ Les messages sont en FLAC qualité CD (16 bits / 44,1 kHz, stéréo), découpés
 pour pouvoir être déposés depuis le site GitHub. Le lecteur de l'appli les enchaîne automatiquement.
 Ils vont dans le dossier `audio/`, à côté de `index.html`. GitHub Pages limite le site à 1 Go au total.
 
+## Modifier le contenu
+
+Le contenu (planning, ateliers, annonces, versets, liens, plan) est rangé dans le bloc
+`<script type="application/json" id="app-data">` de `index.html`.
+
+- **Version hébergée sur Claude** : le bouton « Modifier » permet de tout changer sans toucher au code, puis « Publier ».
+- **Cette copie GitHub** : le bouton « Modifier » n'apparaît pas. Pour la mettre à jour, remplace `index.html` par la dernière version (ou modifie le bloc `app-data`).
 
 ## Charte
 
