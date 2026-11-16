@@ -1561,7 +1561,7 @@ a { color: inherit; }
         '<input class="aud-seek" type="range" min="0" max="' + Math.round(T) + '" step="1" value="0" aria-label="Position dans le message" data-aud-seek>' +
         '<div class="aud-row"><span class="aud-time"><span data-aud-cur>0:00</span> / ' + fmtT(T) + "</span>" +
           '<span class="aud-btns"><button data-aud-act="back" aria-label="Reculer de 15 secondes">−15 s</button><button data-aud-act="fwd" aria-label="Avancer de 15 secondes">+15 s</button><button data-aud-act="rate" aria-label="Vitesse de lecture">×1</button></span></div>' +
-      "</div>" + (p.audio.start ? '<button class="aud-jump" data-aud-act="jump">▶ Écouter la prédication directement <span>(' + fmtT(p.audio.start) + ")</span></button>" : "") + "</div>";
+      "</div>" + (p.audio.start ? '<button class="aud-jump" data-aud-act="jump">Écouter la prédication</button>' : "") + "</div>";
   }
   // Deux lecteurs en alternance : le morceau suivant est préchargé dans le second,
   // puis lancé à la milliseconde où le premier se termine (pas de blanc entre deux morceaux).
